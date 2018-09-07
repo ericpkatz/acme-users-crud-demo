@@ -8,57 +8,52 @@ export default class UserCreateUpdate extends Component{
       error: ''
     };
     this.handleChange = this.handleChange.bind(this);
-    this.onSave = this.onSave.bind(this);
-    this.fetchUser = this.fetchUser.bind(this);
+    this.save = this.save.bind(this);
     if(this.props.id){
       this.fetchUser(this.props.id);
     }
   }
-  fetchUser(id){
-    console.log(this.props.users);
-    const user = this.props.users.find(_user => _user.id === id*1);
-    //this.props.fetchUser(this.props.id)
-      //.then( user => {
-        if(user){
-          this.setState({ name : user.name });
-        }
-      //});
-
-  }
   componentDidUpdate(prevProps){
-    if(this.props.id && (this.props.id !== prevProps.id || this.props.loaded && !prevProps.loaded)){
+    if(this.props.id && prevProps.id !== this.props.id){
       this.fetchUser(this.props.id);
     }
-    if(!this.props.id && prevProps.id){
+    if(prevProps.id && !this.props.id){
       this.setState({ name: ''});
     }
   }
-  handleChange(ev){
-    const change = {};
-    change[ev.target.name] = ev.target.value;
-    this.setState(change);
+  fetchUser(id){
+    this.props.fetchUser(id)
+      .then( user => this.setState({ name: user.name }));
   }
-  onSave(ev){
+  save(ev){
     ev.preventDefault();
     this.props.save({
       name: this.state.name,
       id: this.props.id
     }, this.props.history)
     .catch(ex => {
-      this.setState({ error: ex.response.data.error });
+      this.setState({ error: ex.response.data.error});
     });
+
+  }
+  handleChange(ev){
+    const change = {};
+    change[ev.target.name] = ev.target.value;
+    this.setState(change);
   }
   render(){
-    const { handleChange, onSave } = this;
     const { name, error } = this.state;
+    const { handleChange, save } = this;
     const { id } = this.props;
     return (
-      <form onSubmit={ onSave }>
-        <input value={ name } name='name' onChange={ handleChange } />
-        <button>{ id? 'Update' : 'Create' }</button>
+      <form onSubmit={ save }>
+      <input name='name' value={ name } onChange ={ handleChange } />
+      { error }
+      <button disabled={ !name }>
         {
-          error ? (<div>{ error }</div>) : null 
+          id ? 'Update': 'Create'
         }
+      </button>
       </form>
     );
   }

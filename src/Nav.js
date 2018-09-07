@@ -1,21 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+
 export default ({ path, users })=> {
-  const selected = {
-    fontWeight: 'bold'
-  };
+  const isSelected = (_path)=> _path === path;
   return (
     <ul>
-      <li style={ path === '/' ? selected: null }>
+      <li className={ isSelected('/') ? 'selected': ''}>
         <Link to='/'>Home</Link>
       </li>
-      <li style={ path === '/users' ? selected: null }>
+      <li className={ isSelected('/users') ? 'selected': ''}>
         <Link to='/users'>Users ({ users.length })</Link>
       </li>
-      <li style={ path === '/users/create' ? selected: null }>
+      <li className={ isSelected('/users/create') ? 'selected': ''}>
         <Link to='/users/create'>Create A User</Link>
       </li>
     </ul>
-
   );
-};
+}
